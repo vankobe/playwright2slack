@@ -5,7 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "playwright": "^1.10.0"
+    "playwright": "^1.10.0",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "playwright-cli": "^0.180.0"

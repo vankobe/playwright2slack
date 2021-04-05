@@ -1,1 +1,12 @@
-EMAIL=xxxxxx PASSWORD=yyyyyyyy node index.js
+## Setup
+```
+npm install
+cp .env.template .env
+#=> edit .env
+```
+
+## execute
+
+```
+node mc.js
+```

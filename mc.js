@@ -1,4 +1,6 @@
 const { chromium } = require('playwright');
+const request = require('request');
+const fs = require('fs')
 require('dotenv').config();
 
 (async () => {
@@ -27,15 +29,41 @@ require('dotenv').config();
   await scrollFullPage(page, element);
   await element.screenshot({
       fullPage: true,
-      path: 'a.jpg'
+      path: 'mc.jpg'
       });
 
   // ---------------------
   await context.close();
   await browser.close();
+
+  notifyToSlack();
+  removeFIle();
 })();
 async function scrollFullPage(page, element) {
   await page.evaluate(([e]) => {
     return Promise.resolve(e.scrollTo(0, e.scrollHeight))
   }, [element]);
+}
+
+function notifyToSlack(){
+  request.post({
+      url: 'https://slack.com/api/files.upload',
+      formData: {
+          token: process.env.SLACK_BOT_TOKEN,
+          title: "FS結果",
+          filename: "mc.jpg",
+          filetype: "auto",
+          channels: process.env.SLACK_CHANNEL_ID,
+          file: fs.createReadStream('mc.jpg'),
+      },
+  }, function (err, response) {
+      console.log(JSON.parse(response.body));
+  });
+}
+
+function removeFIle(){
+  fs.unlink('mc.jpg', (err) => {
+    if (err) throw err;
+    console.log('削除しました。');
+  });
 }
