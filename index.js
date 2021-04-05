@@ -1,8 +1,9 @@
 const { chromium } = require('playwright');
+require('dotenv').config();
+
 (async () => {
   const browser = await chromium.launch({
-    headless: false,
-    slowMo: 100
+    headless: false
   });
   const context = await browser.newContext();
   // Open new page
@@ -18,7 +19,7 @@ const { chromium } = require('playwright');
   // Click input:has-text("ログイン")
   await page.click('input:has-text("ログイン")');
 
-  await page.goto('https://motivation-cloudapp.com/companies/775/surveys/6249/improvements/results/1315967');
+  await page.goto(process.env.URL);
   await page.click('text=閉じる');
   await page.waitForSelector(".survey-result-and-improvement-release-information-modal",{state: "detached"});
 
