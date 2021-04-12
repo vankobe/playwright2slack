@@ -5,12 +5,13 @@ require('dotenv').config();
 
 (async () => {
   const browser = await chromium.launch({
-    headless: false
+    headless: true
   });
-  const context = await browser.newContext();
+  const context = await browser.newContext({
+    locale: 'ja_JP',
+  });
   // Open new page
   const page = await context.newPage();
-  await page.setViewportSize({width: 1500, height: 4000});
 
   // Go to https://motivation-cloudapp.com/users/sign_in
   await page.goto('https://motivation-cloudapp.com/users/sign_in');
@@ -24,8 +25,12 @@ require('dotenv').config();
   await page.goto(process.env.URL);
   await page.click('text=閉じる');
   await page.waitForSelector(".survey-result-and-improvement-release-information-modal",{state: "detached"});
-
   const element = await page.$('#inner-scroll')
+
+  const elementHeight = await getElementHeight(page, element)
+
+  await page.setViewportSize({width: 1500, height: elementHeight});
+
   await scrollFullPage(page, element);
   await element.screenshot({
       fullPage: true,
@@ -42,6 +47,12 @@ require('dotenv').config();
 async function scrollFullPage(page, element) {
   await page.evaluate(([e]) => {
     return Promise.resolve(e.scrollTo(0, e.scrollHeight))
+  }, [element]);
+}
+
+async function getElementHeight(page, element) {
+  return  page.evaluate(([e]) => {
+    return Promise.resolve(e.scrollHeight)
   }, [element]);
 }
 
